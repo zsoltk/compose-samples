@@ -45,6 +45,8 @@ import com.example.jetnews.R
 import com.example.jetnews.ui.article.ArticleScreen
 import com.example.jetnews.ui.home.HomeScreen
 import com.example.jetnews.ui.interests.InterestsScreen
+import com.github.zsoltk.compose.router.BackStack
+import com.github.zsoltk.compose.router.Router
 
 @Composable
 fun JetnewsApp() {
@@ -55,29 +57,45 @@ fun JetnewsApp() {
         colors = lightThemeColors,
         typography = themeTypography
     ) {
-        ModalDrawerLayout(
-            drawerState = drawerState,
-            onStateChange = onDrawerStateChange,
-            gesturesEnabled = drawerState == DrawerState.Opened,
-            drawerContent = {
-                AppDrawer(
-                    currentScreen = JetnewsStatus.currentScreen,
-                    closeDrawer = { onDrawerStateChange(DrawerState.Closed) }
-                )
-            },
-            bodyContent = { AppContent { onDrawerStateChange(DrawerState.Opened) } }
-        )
+        Router(contextId = "Root", defaultRouting = Screen.Home as Screen) { backStack ->
+            ModalDrawerLayout(
+                drawerState = drawerState,
+                onStateChange = onDrawerStateChange,
+                gesturesEnabled = drawerState == DrawerState.Opened,
+                drawerContent = {
+                    AppDrawer(
+                        currentScreen = backStack.last(),
+                        closeDrawer = { onDrawerStateChange(DrawerState.Closed) },
+                        navigateTo = { backStack.push(it) }
+                    )
+                },
+                bodyContent = {
+                    AppContent(
+                        backStack = backStack,
+                        openDrawer = { onDrawerStateChange(DrawerState.Opened) }
+                    )
+                }
+            )
+        }
     }
 }
 
 @Composable
-private fun AppContent(openDrawer: () -> Unit) {
-    Crossfade(JetnewsStatus.currentScreen) { screen ->
+private fun AppContent(backStack: BackStack<Screen>, openDrawer: () -> Unit) {
+    val currentScreen = backStack.last()
+
+    Crossfade(currentScreen) { screen ->
         Surface(color = (+MaterialTheme.colors()).background) {
             when (screen) {
-                is Screen.Home -> HomeScreen { openDrawer() }
+                is Screen.Home -> HomeScreen(
+                    openDrawer = { openDrawer() },
+                    onPostSelected = { post -> backStack.push(Screen.Article(post.id)) }
+                )
                 is Screen.Interests -> InterestsScreen { openDrawer() }
-                is Screen.Article -> ArticleScreen(postId = screen.postId)
+                is Screen.Article -> ArticleScreen(
+                    postId = screen.postId,
+                    onAppBarBack = { backStack.pop() }
+                )
             }
         }
     }
@@ -86,6 +104,7 @@ private fun AppContent(openDrawer: () -> Unit) {
 @Composable
 private fun AppDrawer(
     currentScreen: Screen,
+    navigateTo: (Screen) -> Unit,
     closeDrawer: () -> Unit
 ) {
     Column(modifier = Expanded) {
@@ -167,7 +186,8 @@ private fun DrawerButton(
 @Composable
 fun preview() {
     AppDrawer(
-        currentScreen = JetnewsStatus.currentScreen,
-        closeDrawer = { }
+        currentScreen = Screen.Home,
+        closeDrawer = { },
+        navigateTo = { }
     )
 }

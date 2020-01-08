@@ -42,7 +42,6 @@ fun ComposeTestRule.launchJetNewsApp() {
  * Resets the state of the app. Needs to be executed in Compose code (within a frame)
  */
 fun JetnewsStatus.resetState() {
-    currentScreen = Screen.Home
     favorites.clear()
     selectedTopics.clear()
 }

@@ -37,12 +37,10 @@ import androidx.ui.tooling.preview.Preview
 import com.example.jetnews.R
 import com.example.jetnews.data.posts
 import com.example.jetnews.model.Post
-import com.example.jetnews.ui.Screen
 import com.example.jetnews.ui.VectorImageButton
-import com.example.jetnews.ui.navigateTo
 
 @Composable
-fun HomeScreen(openDrawer: () -> Unit) {
+fun HomeScreen(openDrawer: () -> Unit, onPostSelected: (Post) -> Unit) {
     val postTop = posts[3]
     val postsSimple = posts.subList(0, 2)
     val postsPopular = posts.subList(2, 7)
@@ -59,17 +57,17 @@ fun HomeScreen(openDrawer: () -> Unit) {
         )
         VerticalScroller(modifier = Flexible(1f)) {
             Column {
-                HomeScreenTopSection(post = postTop)
-                HomeScreenSimpleSection(posts = postsSimple)
-                HomeScreenPopularSection(posts = postsPopular)
-                HomeScreenHistorySection(posts = postsHistory)
+                HomeScreenTopSection(post = postTop, onPostSelected = onPostSelected)
+                HomeScreenSimpleSection(posts = postsSimple, onPostSelected = onPostSelected)
+                HomeScreenPopularSection(posts = postsPopular, onPostSelected = onPostSelected)
+                HomeScreenHistorySection(posts = postsHistory, onPostSelected = onPostSelected)
             }
         }
     }
 }
 
 @Composable
-private fun HomeScreenTopSection(post: Post) {
+private fun HomeScreenTopSection(post: Post, onPostSelected: (Post) -> Unit) {
 
     Text(
         modifier = Spacing(top = 16.dp, left = 16.dp, right = 16.dp),
@@ -77,9 +75,7 @@ private fun HomeScreenTopSection(post: Post) {
         style = ((+MaterialTheme.typography()).subtitle1).withOpacity(0.87f)
     )
     Ripple(bounded = true) {
-        Clickable(onClick = {
-            navigateTo(Screen.Article(post.id))
-        }) {
+        Clickable(onClick = { onPostSelected.invoke(post) }) {
             PostCardTop(post = post)
         }
     }
@@ -87,15 +83,15 @@ private fun HomeScreenTopSection(post: Post) {
 }
 
 @Composable
-private fun HomeScreenSimpleSection(posts: List<Post>) {
+private fun HomeScreenSimpleSection(posts: List<Post>, onPostSelected: (Post) -> Unit) {
     posts.forEach { post ->
-        PostCardSimple(post)
+        PostCardSimple(post, onPostSelected)
         HomeScreenDivider()
     }
 }
 
 @Composable
-private fun HomeScreenPopularSection(posts: List<Post>) {
+private fun HomeScreenPopularSection(posts: List<Post>, onPostSelected: (Post) -> Unit) {
     Text(
         modifier = Spacing(16.dp),
         text = "Popular on Jetnews",
@@ -105,7 +101,7 @@ private fun HomeScreenPopularSection(posts: List<Post>) {
         Row(modifier = Spacing(bottom = 16.dp, right = 16.dp)) {
             posts.forEach { post ->
                 WidthSpacer(16.dp)
-                PostCardPopular(post)
+                PostCardPopular(post, onPostSelected)
             }
         }
     }
@@ -113,9 +109,9 @@ private fun HomeScreenPopularSection(posts: List<Post>) {
 }
 
 @Composable
-private fun HomeScreenHistorySection(posts: List<Post>) {
+private fun HomeScreenHistorySection(posts: List<Post>, onPostSelected: (Post) -> Unit) {
     posts.forEach { post ->
-        PostCardHistory(post)
+        PostCardHistory(post, onPostSelected)
         HomeScreenDivider()
     }
 }
@@ -130,5 +126,8 @@ private fun HomeScreenDivider() {
 @Preview
 @Composable
 fun preview() {
-    HomeScreen {}
+    HomeScreen(
+        openDrawer = {},
+        onPostSelected = {}
+    )
 }
