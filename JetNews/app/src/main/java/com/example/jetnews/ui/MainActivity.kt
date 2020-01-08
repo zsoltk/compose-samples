@@ -21,8 +21,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.ui.core.setContent
 import com.example.jetnews.data.getPostsWithImagesLoaded
 import com.example.jetnews.data.posts
+import com.github.zsoltk.compose.backpress.BackPressHandler
+import com.github.zsoltk.compose.savedinstancestate.TimeCapsule
 
 class MainActivity : AppCompatActivity() {
+    private val backPressHandler = BackPressHandler()
+    private val timeCapsule = TimeCapsule()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +35,22 @@ class MainActivity : AppCompatActivity() {
             resources
         )
         setContent {
-            JetnewsApp()
+            backPressHandler.Provider {
+                timeCapsule.Provider(savedInstanceState) {
+                    JetnewsApp()
+                }
+            }
         }
+    }
+
+    override fun onBackPressed() {
+        if (!backPressHandler.handle()) {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        timeCapsule.onSaveInstanceState(outState)
     }
 }

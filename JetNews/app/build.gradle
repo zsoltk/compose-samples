@@ -66,6 +66,8 @@ dependencies {
     implementation('androidx.activity:activity-ktx:1.0.0')
     implementation "androidx.core:core-ktx:1.1.0"
 
+    implementation 'com.github.zsoltk:compose-router:0.3.1'
+
     androidTestImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test:rules:1.2.0")
     androidTestImplementation("androidx.test:runner:1.2.0")

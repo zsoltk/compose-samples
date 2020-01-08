@@ -38,15 +38,12 @@ import androidx.ui.text.style.TextOverflow
 import com.example.jetnews.R
 import com.example.jetnews.model.Post
 import com.example.jetnews.ui.Screen
-import com.example.jetnews.ui.navigateTo
 
 @Composable
-fun PostCardPopular(post: Post) {
+fun PostCardPopular(post: Post, onPostSelected: (Post) -> Unit) {
     Card(shape = RoundedCornerShape(4.dp)) {
         Ripple(bounded = true) {
-            Clickable(onClick = {
-                navigateTo(Screen.Article(post.id))
-            }) {
+            Clickable(onClick = { onPostSelected(post) }) {
                 Container(modifier = Size(280.dp, 240.dp)) {
                     Column(modifier = Expanded) {
                         val image = post.image ?: +imageResource(R.drawable.placeholder_4_3)

@@ -48,15 +48,13 @@ import com.example.jetnews.R
 import com.example.jetnews.data.post3
 import com.example.jetnews.data.posts
 import com.example.jetnews.model.Post
-import com.example.jetnews.ui.Screen
 import com.example.jetnews.ui.VectorImageButton
 import com.example.jetnews.ui.home.BookmarkButton
 import com.example.jetnews.ui.home.isFavorite
 import com.example.jetnews.ui.home.toggleBookmark
-import com.example.jetnews.ui.navigateTo
 
 @Composable
-fun ArticleScreen(postId: String) {
+fun ArticleScreen(postId: String, onAppBarBack: () -> Unit) {
 
     var showDialog by +state { false }
     // getting the post from our list of posts by Id
@@ -78,7 +76,7 @@ fun ArticleScreen(postId: String) {
             },
             navigationIcon = {
                 VectorImageButton(R.drawable.ic_back) {
-                    navigateTo(Screen.Home)
+                    onAppBarBack()
                 }
             }
         )
@@ -161,5 +159,5 @@ private fun sharePost(post: Post, context: Context) {
 @Preview
 @Composable
 fun previewArticle() {
-    ArticleScreen(post3.id)
+    ArticleScreen(post3.id) {}
 }

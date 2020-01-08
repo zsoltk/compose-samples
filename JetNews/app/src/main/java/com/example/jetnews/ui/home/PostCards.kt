@@ -40,7 +40,6 @@ import com.example.jetnews.model.Post
 import com.example.jetnews.ui.JetnewsStatus
 import com.example.jetnews.ui.Screen
 import com.example.jetnews.ui.VectorImage
-import com.example.jetnews.ui.navigateTo
 
 @Composable
 fun AuthorAndReadTime(post: Post) {
@@ -69,11 +68,9 @@ fun PostTitle(post: Post) {
 }
 
 @Composable
-fun PostCardSimple(post: Post) {
+fun PostCardSimple(post: Post, onPostSelected: (Post) -> Unit) {
     Ripple(bounded = true) {
-        Clickable(onClick = {
-            navigateTo(Screen.Article(post.id))
-        }) {
+        Clickable(onClick = { onPostSelected(post) }) {
             Row(modifier = Spacing(16.dp)) {
                 PostImage(modifier = Spacing(right = 16.dp), post = post)
                 Column(modifier = Flexible(1f)) {
@@ -90,11 +87,9 @@ fun PostCardSimple(post: Post) {
 }
 
 @Composable
-fun PostCardHistory(post: Post) {
+fun PostCardHistory(post: Post, onPostSelected: (Post) -> Unit) {
     Ripple(bounded = true) {
-        Clickable(onClick = {
-            navigateTo(Screen.Article(post.id))
-        }) {
+        Clickable(onClick = { onPostSelected(post) }) {
             Row(modifier = Spacing(all = 16.dp)) {
                 PostImage(modifier = Spacing(right = 16.dp), post = post)
                 Column(modifier = Flexible(1f)) {
@@ -138,7 +133,7 @@ fun BookmarkButton(
 @Preview
 @Composable
 fun runPreview() {
-    PostCardSimple(post = post3)
+    PostCardSimple(post = post3, onPostSelected = {})
 }
 
 fun toggleBookmark(postId: String) {
