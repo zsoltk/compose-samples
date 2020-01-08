@@ -46,6 +46,7 @@ import com.example.jetnews.data.publications
 import com.example.jetnews.data.topics
 import com.example.jetnews.ui.JetnewsStatus
 import com.example.jetnews.ui.VectorImageButton
+import com.github.zsoltk.compose.router.Router
 
 private enum class Sections(val title: String) {
     Topics("Topics"),
@@ -55,29 +56,31 @@ private enum class Sections(val title: String) {
 
 @Composable
 fun InterestsScreen(openDrawer: () -> Unit) {
-
-    var section by +state { Sections.Topics }
     val sectionTitles = Sections.values().map { it.title }
 
-    Column {
-        TopAppBar(
-            title = { Text("Interests") },
-            navigationIcon = {
-                VectorImageButton(R.drawable.ic_jetnews_logo) {
-                    openDrawer()
+    Router("Interests", Sections.Topics) { backStack ->
+        val section = backStack.last()
+
+        Column {
+            TopAppBar(
+                title = { Text("Interests") },
+                navigationIcon = {
+                    VectorImageButton(R.drawable.ic_jetnews_logo) {
+                        openDrawer()
+                    }
+                }
+            )
+            TabRow(items = sectionTitles, selectedIndex = section.ordinal) { index, text ->
+                Tab(text = text, selected = section.ordinal == index) {
+                    backStack.push(Sections.values()[index])
                 }
             }
-        )
-        TabRow(items = sectionTitles, selectedIndex = section.ordinal) { index, text ->
-            Tab(text = text, selected = section.ordinal == index) {
-                section = Sections.values()[index]
-            }
-        }
-        Container(modifier = Flexible(1f)) {
-            when (section) {
-                Sections.Topics -> TopicsTab()
-                Sections.People -> PeopleTab()
-                Sections.Publications -> PublicationsTab()
+            Container(modifier = Flexible(1f)) {
+                when (section) {
+                    Sections.Topics -> TopicsTab()
+                    Sections.People -> PeopleTab()
+                    Sections.Publications -> PublicationsTab()
+                }
             }
         }
     }
